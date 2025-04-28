@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load form_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>{% if form.instance.pk %}Update NNote{% else %}Create Note{% endif %}</h1>
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{form.title.label_tag}}<br>
+            {{form.title|add_class:"form-control"}}
+        </div>
+        <div class="mb-3">
+            {{form.content.label_tag}}<br>
+            {{form.content|add_class:"form-control"}}
+        </div>
+        <button type="submit" class="btn btn-success">Save</button>
+        <a href="{% url 'note_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
