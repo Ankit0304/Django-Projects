@@ -6,7 +6,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white text-center">
-                    <h2>Register</h2>
+                    <h2>Login</h2>
                 </div>
                 <div class="card-body">
                     <form method="post" class="needs-validation" novalidate>
@@ -15,12 +15,12 @@
                             {{ form.as_p }}
                         </div>
                         <div class="text-center">
-                            <button type="submit" class="btn btn-primary btn-block ">Register</button>
+                            <button type="submit" class="btn btn-primary btn-block ">Login</button>
                         </div>
                     </form>
                 </div>
                 <div class="card-footer text-center">
-                    <p>Already have an account? <a href="{% url 'login' %}" class="text-primary">Login</a></p>
+                    <p>Didn't have an account? <a href="{% url 'register' %}" class="text-primary">Register</a></p>
                 </div>
             </div>
         </div>
