@@ -38,28 +38,67 @@ def dashboard(request):
     return render(request, 'dashboard.html', context)
   
 
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.contrib.auth.models import User
+from .forms import RegisterForm, LoginForm
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.contrib.auth import login as auth_login
+from .forms import RegisterForm
+
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            # Save the user to the database
-            pass
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            password_confirm = form.cleaned_data['password_confirm']
+
+            if password != password_confirm:
+                form.add_error('password_confirm', 'Passwords do not match')
+            elif User.objects.filter(username=username).exists():
+                form.add_error('username', 'Username already exists')
+            elif User.objects.filter(email=email).exists():
+                form.add_error('email', 'Email already exists')
+            else:
+                user = User.objects.create_user(username=username, email=email, password=password)
+                auth_login(request, user)  # Log the user in
+                return redirect('dashboard')  # Redirect to dashboard after registration
     else:
         form = RegisterForm()
     return render(request, 'register.html', {'form': form})
+
+
+from django.contrib.auth import authenticate, login as auth_login
 
 def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            # Authenticate the user
-            pass
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                auth_login(request, user)
+                return redirect('dashboard')
+            else:
+                form.add_error(None, 'Invalid username or password')
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
+
+
+from django.contrib.auth import logout as auth_logout
+from django.shortcuts import redirect
+
 def logout(request):
-    return render(request, 'login.html')
+    auth_logout(request)
+    return redirect('login')
 
 def transaction(request):
     return render(request, 'transaction.html')
