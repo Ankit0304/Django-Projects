@@ -1,57 +1,154 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-4">
-    <h2>Dashboard</h2>
-    <div class="row text-center mb-4">
-        <div class="col-md-4">
-            <div class="card text-white bg-success">
-                <div class="card-body">
-                    <h5>Income</h5>
-                    <p>₹{{ income }}</p>
-                </div>
-            </div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2 bg-primary text-white p-3" style="min-height: 100vh;">
+            <h4 class="fw-bold">Other Level's</h4>
+            <ul class="nav flex-column mt-4">
+                {% for month in months %}
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-white" href="#">{{ month }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-danger">
-                <div class="card-body">
-                    <h5>Expense</h5>
-                    <p>₹{{ expense }}</p>
+
+        <!-- Main Content -->
+        <div class="col-md-10 p-4">
+            <!-- Topbar -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Available Balance: <span class="text-success">$14,822</span></h2>
+                <div>
+                    <button class="btn btn-outline-light me-2">Dashboard</button>
+                    <button class="btn btn-outline-light me-2">Spreadsheet</button>
+                    <span>{{ today_date }}</span>
+                    <img src="https://via.placeholder.com/40" alt="Profile" class="rounded-circle ms-3">
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-info">
-                <div class="card-body">
-                    <h5>Balance</h5>
-                    <p>₹{{ balance }}</p>
+
+            <!-- Cards Section -->
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card bg-gradient text-white p-3" style="background: linear-gradient(to right, #FF416C, #FF4B2B);">
+                        <h5>Total Net Worth</h5>
+                        <h3>$278,378</h3>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card bg-secondary text-white p-3">
+                        <h5>Spending</h5>
+                        <h3>$9,228</h3>
+                        <!-- Placeholder for chart -->
+                        <canvas id="spendingChart" height="100"></canvas>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card bg-secondary text-white p-3">
+                        <h5>Income</h5>
+                        <h3>$24,050</h3>
+                        <!-- Placeholder for chart -->
+                        <canvas id="incomeChart" height="100"></canvas>
+                    </div>
                 </div>
             </div>
+
+            <!-- Middle Section -->
+            <div class="row g-4 mt-3">
+                <div class="col-md-6">
+                    <div class="card bg-secondary text-white p-3">
+                        <h5>Income Source</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item bg-secondary text-white">E-commerce: $2,100</li>
+                            <li class="list-group-item bg-secondary text-white">Google Adsense: $950</li>
+                            <li class="list-group-item bg-secondary text-white">My Shop: $8,000</li>
+                            <li class="list-group-item bg-secondary text-white">Salary: $13,000</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card bg-secondary text-white p-3">
+                        <h5>Expenses Breakdown</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item bg-secondary text-white">Housing: $3,452</li>
+                            <li class="list-group-item bg-secondary text-white">Personal: $2,200</li>
+                            <li class="list-group-item bg-secondary text-white">Transportation: $2,190</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section -->
+            <div class="row g-4 mt-3">
+                <div class="col-md-6">
+                    <div class="card bg-secondary text-white p-3">
+                        <h5>Income Goal</h5>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 61%">61%</div>
+                        </div>
+                        <p>$24,050 / $39,276</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card bg-danger text-white p-3">
+                        <h5>Notification</h5>
+                        <p>3 Bills are past Due, Pay soon to avoid late fees.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pets Expense -->
+            <div class="row g-4 mt-3">
+                <div class="col-md-12">
+                    <div class="card bg-secondary text-white p-3">
+                        <h5>Expenses for My Dogs and Cats</h5>
+                        <p>Routine Vet: $140</p>
+                        <p>Food: $950</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
-
-    <h4>Recent Transactions</h4>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Date</th><th>Type</th><th>Category</th><th>Amount</th><th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for txn in recent_transactions %}
-            <tr>
-                <td>{{ txn.date }}</td>
-                <td>{{ txn.type }}</td>
-                <td>{{ txn.category.name }}</td>
-                <td>₹{{ txn.amount }}</td>
-                <td>{{ txn.description }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <h4>Expense by Category</h4>
-    <canvas id="expenseChart" width="400" height="200"></canvas>
 </div>
+
+<!-- Bootstrap + Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx1 = document.getElementById('spendingChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+            datasets: [{
+                label: 'Spendings',
+                data: [500, 1000, 800, 750, 900, 700, 1200],
+                borderColor: 'red',
+                tension: 0.4
+            }]
+        }
+    });
+
+    const ctx2 = document.getElementById('incomeChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'line',
+        data: {
+            labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+            datasets: [{
+                label: 'Income',
+                data: [3000, 2800, 3500, 3300, 3100, 3700, 3200],
+                borderColor: 'orange',
+                tension: 0.4
+            }]
+        }
+    });
+</script>
 
 <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>

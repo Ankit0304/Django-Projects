@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .forms import *
 from .models import *
 from django.db.models import Sum
-from datetime import date
+from datetime import datetime
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -34,8 +34,10 @@ def dashboard(request):
         'labels': labels,
         'data': data,
     }
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     
-    return render(request, 'dashboard.html', context)
+    return render(request, 'dashboard.html', {'today_date': datetime.now().strftime("%A, %B %d, %Y"),'months': months})
   
 
 from django.shortcuts import render, redirect
@@ -102,3 +104,17 @@ def logout(request):
 
 def transaction(request):
     return render(request, 'transaction.html')
+@login_required
+def profile_page(request):
+    return render(request, 'profile.html', {'user': request.user})
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = Profile(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = Profile(instance=request.user)
+    return render(request, 'edit_profile.html', {'form': form})
