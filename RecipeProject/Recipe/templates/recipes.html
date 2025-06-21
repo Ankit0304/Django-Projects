@@ -25,6 +25,33 @@
             </div>
             <button type="submit" class="btn btn-success">Add Recipe</button>
         </form>
+        
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Recipe Name</th>
+                    <th scope="col">Recipe Desc</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for recipe in recipes%}
+                <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{recipe.recipe_name}}</td>
+                    <td>{{recipe.recipe_description}}</td>
+                    <td>
+                        <img src="/media/{{recipe.recipe_image}}" style="height: 150px">
+                    </td>
+                    <td>
+                        <a href="{% url 'delete_recipe' recipe.id %}" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </body>
 </html>

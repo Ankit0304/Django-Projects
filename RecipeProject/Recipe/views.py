@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse 
 from .models import *
 
 # Create your views here.
@@ -18,4 +19,18 @@ def recipes(request):
         
         return redirect('recipes')
     
-    return render(request, 'recipes.html')
+    queryset = Recipe.objects.all()
+    context = {
+        'recipes': queryset
+    }
+    
+    return render(request, 'recipes.html', context)
+
+def delete_recipe(request, id):
+    queryset = Recipe.objects.filter(id=id)
+    queryset.delete()
+    # return HttpResponse(f"Delete recipe with id: {id}")
+    return redirect('recipes')
+
+
+
