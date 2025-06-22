@@ -25,8 +25,22 @@
             </div>
             <button type="submit" class="btn btn-success">Add Recipe</button>
         </form>
-        
-        <table class="table table-bordered table-striped">
+        <hr>
+        <div class="mt-5">
+            <div class="mx-auto col-6">
+                <form>
+                <div class="mb-3">
+                    <label for="search" class="form-label">Search Recipe</label>
+                    {% comment %} <input type="text" class="form-control" id="search" placeholder="Search by recipe name"> {% endcomment %}
+                    <input name="search" type="text" class="form-control" >
+                </div>
+                <button class="btn btn-primary mt-2">Search</button>
+                </form>
+            </div>
+            
+        </div>
+
+        <table class="table table-bordered table-striped mt-5">
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -46,7 +60,8 @@
                         <img src="/media/{{recipe.recipe_image}}" style="height: 150px">
                     </td>
                     <td>
-                        <a href="{% url 'delete_recipe' recipe.id %}" class="btn btn-danger">Delete</a>
+                        <a href="{% url 'delete_recipe' recipe.id %}" class="btn btn-danger m-2">Delete</a>
+                        <a href="{% url 'update_recipe' recipe.id %}" class="btn btn-success">Update</a>
                     </td>
                 </tr>
                 {% endfor %}

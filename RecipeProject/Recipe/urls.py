@@ -8,6 +8,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 urlpatterns = [
     path('', views.recipes, name='recipes'),
     path('delete/<id>/', views.delete_recipe, name='delete_recipe'),
+    path('update/<id>/', views.update_recipe, name='update_recipe'),
 ]
 
 if settings.DEBUG:
