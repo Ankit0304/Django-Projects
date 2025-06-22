@@ -9,6 +9,8 @@ urlpatterns = [
     path('', views.recipes, name='recipes'),
     path('delete/<id>/', views.delete_recipe, name='delete_recipe'),
     path('update/<id>/', views.update_recipe, name='update_recipe'),
+    path('login/', views.login_page, name='login_page'),
+    path('register/', views.register_page, name='register_page'),
 ]
 
 if settings.DEBUG:

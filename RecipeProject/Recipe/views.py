@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse 
 from .models import *
+from django.contrib.auth.models import User
+from django.contrib import messages
+
 
 # Create your views here.
 def recipes(request):
@@ -57,3 +60,29 @@ def update_recipe(request, id):
     return render(request, 'update_recipe.html', context)
     
 
+def login_page(request):
+    return render(request, 'login.html')
+
+def register_page(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password1')
+        confirm_password = request.POST.get('password2')
+        
+        if password != confirm_password:
+            return render(request, 'register.html', {'error': "Passwords do not match."})
+
+        if User.objects.filter(email=email).exists():
+            return render(request, 'register.html', {'error': "Email already in use."})
+
+        user = User.objects.create_user(
+            username=username,
+            email=email
+        )
+        user.set_password(password)
+        user.save()
+        messages.success(request, "Account created successfully! Please log in.")
+        return redirect('/login/')
+        
+    return render(request, 'register.html')
