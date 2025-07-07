@@ -8,19 +8,31 @@
 </head>
 <body>
     <div class="container mt-5">
+        {% if error %}
+        <div class="alert alert-danger text-center">
+            {{ error }}
+        </div>
+        {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} text-center">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
         <form class="col-6 mx-auto card p-3 shadow-lg" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <h2 class="text-center ">Login</h2>
             <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                <label for="exampleInputEmail1" class="form-label">Username</label>
+                <input type="text" class="form-control" name="username" id="exampleInputEmail1" aria-describedby="emailHelp">
+                {% comment %} <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> {% endcomment %}
             </div>
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1">
+                <input type="password" name="password" class="form-control" id="exampleInputPassword1">
             </div>
-            <p>Don't have an account? <a href="/register/">Register</a></p>
+            <p>Don't have an account? <a href="{% url "register" %}">Register</a></p>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
