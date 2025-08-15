@@ -113,3 +113,6 @@ def logout_page(request):
         logout(request)
         messages.success(request, "You have been logged out successfully.")
     return redirect('/login/')
+
+def dashboard(request):
+    pass 
