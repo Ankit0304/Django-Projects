@@ -1,177 +1,163 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block content %}
 
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-2 bg-primary text-white p-3" style="min-height: 100vh;">
-            <h4 class="fw-bold">Other Level's</h4>
-            <ul class="nav flex-column mt-4">
-                {% for month in months %}
-                    <li class="nav-item mb-2">
-                        <a class="nav-link text-white" href="#">{{ month }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
+<div class="container mt-4">
+
+  <!-- Dashboard Heading -->
+  <div class="text-center mb-4">
+    <h2 class="fw-bold">💰 Finance Dashboard</h2>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row text-center mb-4">
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm border-success">
+        <div class="card-body">
+          <h5 class="card-title text-success">Total Income</h5>
+          <p class="card-text fs-4 fw-bold">₹ {{ income }}</p>
         </div>
-
-        <!-- Main Content -->
-        <div class="col-md-10 p-4">
-            <!-- Topbar -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Available Balance: <span class="text-success">$14,822</span></h2>
-                <div>
-                    <button class="btn btn-outline-light me-2">Dashboard</button>
-                    <button class="btn btn-outline-light me-2">Spreadsheet</button>
-                    <span>{{ today_date }}</span>
-                    <img src="https://via.placeholder.com/40" alt="Profile" class="rounded-circle ms-3">
-                </div>
-            </div>
-
-            <!-- Cards Section -->
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card bg-gradient text-white p-3" style="background: linear-gradient(to right, #FF416C, #FF4B2B);">
-                        <h5>Total Net Worth</h5>
-                        <h3>$278,378</h3>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card bg-secondary text-white p-3">
-                        <h5>Spending</h5>
-                        <h3>$9,228</h3>
-                        <!-- Placeholder for chart -->
-                        <canvas id="spendingChart" height="100"></canvas>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card bg-secondary text-white p-3">
-                        <h5>Income</h5>
-                        <h3>$24,050</h3>
-                        <!-- Placeholder for chart -->
-                        <canvas id="incomeChart" height="100"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Middle Section -->
-            <div class="row g-4 mt-3">
-                <div class="col-md-6">
-                    <div class="card bg-secondary text-white p-3">
-                        <h5>Income Source</h5>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item bg-secondary text-white">E-commerce: $2,100</li>
-                            <li class="list-group-item bg-secondary text-white">Google Adsense: $950</li>
-                            <li class="list-group-item bg-secondary text-white">My Shop: $8,000</li>
-                            <li class="list-group-item bg-secondary text-white">Salary: $13,000</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card bg-secondary text-white p-3">
-                        <h5>Expenses Breakdown</h5>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item bg-secondary text-white">Housing: $3,452</li>
-                            <li class="list-group-item bg-secondary text-white">Personal: $2,200</li>
-                            <li class="list-group-item bg-secondary text-white">Transportation: $2,190</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom Section -->
-            <div class="row g-4 mt-3">
-                <div class="col-md-6">
-                    <div class="card bg-secondary text-white p-3">
-                        <h5>Income Goal</h5>
-                        <div class="progress mb-2">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 61%">61%</div>
-                        </div>
-                        <p>$24,050 / $39,276</p>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card bg-danger text-white p-3">
-                        <h5>Notification</h5>
-                        <p>3 Bills are past Due, Pay soon to avoid late fees.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pets Expense -->
-            <div class="row g-4 mt-3">
-                <div class="col-md-12">
-                    <div class="card bg-secondary text-white p-3">
-                        <h5>Expenses for My Dogs and Cats</h5>
-                        <p>Routine Vet: $140</p>
-                        <p>Food: $950</p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+      </div>
     </div>
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm border-danger">
+        <div class="card-body">
+          <h5 class="card-title text-danger">Total Expense</h5>
+          <p class="card-text fs-4 fw-bold">₹ {{ expense }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm border-primary">
+        <div class="card-body">
+          <h5 class="card-title text-primary">Balance</h5>
+          <p class="card-text fs-4 fw-bold">₹ {{ balance }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Recent Transactions</h5>
+      <a href="{% url 'add_transaction' %}" class="btn btn-sm btn-primary">+ Add Transaction</a>
+    </div>
+    <div class="card-body">
+      {% if transactions %}
+        <ul class="list-group">
+          {% for t in transactions %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              {{ t.date }} - <strong>{{ t.category.name }}</strong>
+            </div>
+            <span class="badge {% if t.category.type == 'income' %}bg-success{% else %}bg-danger{% endif %} rounded-pill">
+              ₹ {{ t.amount }}
+            </span>
+          </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted">No transactions yet</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Budgets -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Budgets</h5>
+    </div>
+    <div class="card-body">
+      {% if budgets %}
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped text-center align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>Category</th>
+                <th>Budget Amount</th>
+                <th>Spent</th>
+                <th>Remaining</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in budgets %}
+              <tr>
+                <td>{{ item.budget.category.name }}</td>
+                <td>₹ {{ item.budget.amount }}</td>
+                <td class="text-danger">₹ {{ item.spent }}</td>
+                <td class="text-success">₹ {{ item.remaining }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="text-muted">No budgets set</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Expense by Category Chart -->
+  <div class="card shadow-sm mb-4" style="max-width:1200px; margin:auto;">
+    <div class="card-header bg-info text-white text-center">
+      <h5 class="mb-0">Expense Distribution</h5>
+    </div>
+    <div class="card-body">
+      <canvas id="expenseChart" height="200"></canvas>
+    </div>
+  </div>
+
 </div>
 
-<!-- Bootstrap + Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx1 = document.getElementById('spendingChart').getContext('2d');
-    new Chart(ctx1, {
-        type: 'line',
-        data: {
-            labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-            datasets: [{
-                label: 'Spendings',
-                data: [500, 1000, 800, 750, 900, 700, 1200],
-                borderColor: 'red',
-                tension: 0.4
-            }]
-        }
-    });
-
-    const ctx2 = document.getElementById('incomeChart').getContext('2d');
-    new Chart(ctx2, {
-        type: 'line',
-        data: {
-            labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-            datasets: [{
-                label: 'Income',
-                data: [3000, 2800, 3500, 3300, 3100, 3700, 3200],
-                borderColor: 'orange',
-                tension: 0.4
-            }]
-        }
-    });
-</script>
-
-<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
     const ctx = document.getElementById('expenseChart').getContext('2d');
-    const expenseChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: {{ labels|safe }},
-            datasets: [{
-                label: 'Expenses',
-                data: {{ data|safe }},
-                backgroundColor: ['#FF6384','#36A2EB','#FFCE56','#8E44AD','#2ECC71']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom'
+    const data = JSON.parse('{{ expense_by_cat|escapejs }}');
+
+    if (data.length > 0) {
+        const labels = data.map(item => item.category__name);
+        const amounts = data.map(item => item.total);
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Expenses by Category',
+                    data: amounts,
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#9C27B0', '#FF9800',
+                        '#00BCD4', '#FFC107', '#9E9E9E', '#8BC34A'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 15, padding: 10 }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let total = context.dataset.data.reduce((a,b)=>a+b,0);
+                                let value = context.parsed;
+                                let percentage = ((value/total)*100).toFixed(1);
+                                return context.label + ': ₹' + value + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
                 }
             }
-        }
-    });
-</script> -->
+        });
+    } else {
+        ctx.font = "15px Arial";
+        ctx.fillText("No expense data available", 2, 60);
+    }
+</script>
+
 {% endblock %}

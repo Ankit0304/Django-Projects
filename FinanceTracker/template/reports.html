@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Page Header -->
+  <div class="text-center mb-4">
+    <h2 class="fw-bold">📊 Monthly Report</h2>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row text-center mb-4">
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm border-success">
+        <div class="card-body">
+          <h5 class="card-title text-success">Total Income</h5>
+          <p class="card-text fs-4 fw-bold">₹ {{ income }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm border-danger">
+        <div class="card-body">
+          <h5 class="card-title text-danger">Total Expense</h5>
+          <p class="card-text fs-4 fw-bold">₹ {{ expense }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm border-primary">
+        <div class="card-body">
+          <h5 class="card-title text-primary">Net Savings</h5>
+          <p class="card-text fs-4 fw-bold">₹ {{ income|floatformat:2|add:"-:"|add:expense }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mb-4" style="max-width:600px;">
+  <form method="GET" class="row g-3 align-items-end">
+    <div class="col-md-5">
+      <label for="month" class="form-label">Month</label>
+      <select name="month" id="month" class="form-select">
+        {% for m in months %}
+          <option value="{{ m.num }}" {% if m.num == selected_month %}selected{% endif %}>{{ m.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-5">
+      <label for="year" class="form-label">Year</label>
+      <select name="year" id="year" class="form-select">
+        {% for y in years %}
+          <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">Filter</button>
+    </div>
+  </form>
+</div>
+
+
+  <!-- Expense by Category Chart -->
+  <!-- Expense by Category Chart -->
+<div class="card shadow-sm mb-4" style="max-width:1200px; margin:auto;">
+    <div class="card-header bg-info text-white text-center">
+        <h5 class="mb-0">Expense Distribution by Category</h5>
+    </div>
+    <div class="card-body">
+        <canvas id="expenseChart" height="200"></canvas>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('expenseChart').getContext('2d');
+    const data = JSON.parse('{{ expense_by_cat|escapejs }}');
+
+    if (data.length > 0) {
+        const labels = data.map(item => item.category__name);
+        const amounts = data.map(item => item.total);
+
+        new Chart(ctx, {
+            type: 'doughnut', // doughnut for better aesthetics
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Expenses by Category',
+                    data: amounts,
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#9C27B0', '#FF9800',
+                        '#00BCD4', '#FFC107', '#9E9E9E', '#8BC34A'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 15,
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                let value = context.parsed;
+                                let percentage = ((value / total) * 100).toFixed(1);
+                                return context.label + ': ₹' + value + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+        ctx.font = "15px Arial";
+        ctx.fillText("No expense data available to display chart.", 1, 60);
+    }
+</script>
+
+{% endblock %}

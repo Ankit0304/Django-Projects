@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-header bg-warning text-dark">
+      <h4 class="mb-0">Edit Budget - {{ budget.category.name }}</h4>
+    </div>
+    <div class="card-body">
+      <form method="POST" class="row g-3">
+        {% csrf_token %}
+        <div class="col-md-4">
+          <label class="form-label">Amount</label>
+          <input type="number" step="0.01" name="amount" value="{{ budget.amount }}" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Start Date</label>
+          <input type="date" name="start_date" value="{{ budget.start_date }}" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">End Date</label>
+          <input type="date" name="end_date" value="{{ budget.end_date }}" class="form-control" required>
+        </div>
+        <div class="col-12 text-end">
+          <button type="submit" class="btn btn-success">Update Budget</button>
+          <a href="{% url 'view_budgets' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
