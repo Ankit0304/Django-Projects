@@ -25,12 +25,16 @@ def dashboard(request):
     transactions = Transaction.objects.filter(user=request.user).order_by('-date')[:5]
 
     # Budgets
-    budgets_qs = Budget.objects.filter(user=request.user)
-    budgets = []
-    for b in budgets_qs:
-        spent = Transaction.objects.filter(user=request.user, category=b.category).aggregate(total=Sum('amount'))['total'] or 0
-        remaining = float(b.amount) - float(spent)
-        budgets.append({'budget': b, 'spent': spent, 'remaining': remaining})
+    budgets = Budget.objects.filter(user=request.user)
+    data = []
+    for b in budgets:
+        spent = Transaction.objects.filter(
+            user=request.user,
+            category=b.category,
+            date__range=[b.start_date, b.end_date]
+        ).aggregate(total=Sum("amount"))["total"] or 0
+        remaining = b.amount - spent
+        data.append({"budget": b, "spent": spent, "remaining": remaining})
 
     # Expense by Category
     expense_by_cat = Transaction.objects.filter(user=request.user, category__type='expense') \
@@ -48,7 +52,7 @@ def dashboard(request):
         'expense': float(expense),
         'balance': balance,
         'transactions': transactions,
-        'budgets': budgets,
+        'budgets': data,
         'expense_by_cat': expense_by_cat_json
     })
 
@@ -185,7 +189,7 @@ def reports(request):
         {'num': 9, 'name': 'September'}, {'num': 10, 'name': 'October'},
         {'num': 11, 'name': 'November'}, {'num': 12, 'name': 'December'}
     ]
-
+    net_savings = income - expense
     return render(request, "reports.html", {
         'income': float(income),
         'expense': float(expense),
@@ -193,7 +197,8 @@ def reports(request):
         'selected_month': month,
         'selected_year': year,
         'years': years,
-        'months': months
+        'months': months,
+        'balance': net_savings,
     })
 
 @login_required
@@ -260,6 +265,7 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
+            Name = form.cleaned_data['Name']
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             password_confirm = form.cleaned_data['password_confirm']
@@ -271,7 +277,7 @@ def register(request):
             elif User.objects.filter(email=email).exists():
                 form.add_error('email', 'Email already exists')
             else:
-                user = User.objects.create_user(username=username, email=email, password=password)
+                user = User.objects.create_user(username=username, Name=Name, email=email, password=password)
                 auth_login(request, user)  # Log the user in
                 return redirect('dashboard')  # Redirect to dashboard after registration
     else:
@@ -300,47 +306,73 @@ def logout(request):
     return redirect('login')
 
 
-from django.contrib.auth.decorators import login_required
+
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
-from django.contrib import messages
+
 
 @login_required
 def profile(request):
     user = request.user
-
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-
-        # Update user details
-        if username and email:
-            user.username = username
-            user.email = email
-            user.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect('profile')
-
-    # Optionally: fetch account stats
-    income = Transaction.objects.filter(user=user, category__type='income').aggregate(total=Sum('amount'))['total'] or 0
-    expense = Transaction.objects.filter(user=user, category__type='expense').aggregate(total=Sum('amount'))['total'] or 0
-    balance = float(income) - float(expense)
-
-    return render(request, 'profile.html', {
+    profile, created = Profile.objects.get_or_create(user=user)
+    # budget = Budget.objects.filter(user=user).first()
+    
+    budgets = Budget.objects.filter(user=request.user)
+    data = []
+    for b in budgets:
+        spent = Transaction.objects.filter(
+            user=request.user,
+            category=b.category,
+            date__range=[b.start_date, b.end_date]
+        ).aggregate(total=Sum("amount"))["total"] or 0
+        remaining = b.amount - spent
+        data.append({"budget": b, "spent": spent, "remaining": remaining})
+    context = {
         'user': user,
-        'income': income,
-        'expense': expense,
-        'balance': balance
-    })
+        'profile': profile,
+        'data': data,
+    }
+    return render(request, 'profile.html', context)
 
+from .forms import UserUpdateForm, ProfileUpdateForm
 
 @login_required
 def edit_profile(request):
+    user = request.user
+    profile, created = Profile.objects.get_or_create(user=user)
+
     if request.method == 'POST':
-        form = Profile(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
+        u_form = UserUpdateForm(request.POST, instance=user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=profile)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, "Profile updated successfully")
             return redirect('profile')
     else:
-        form = Profile(instance=request.user)
-    return render(request, 'edit_profile.html', {'form': form})
+        u_form = UserUpdateForm(instance=user)
+        p_form = ProfileUpdateForm(instance=profile)
+
+    context = {
+        'u_form': u_form,
+        'p_form': p_form,
+        'profile': profile,
+    }
+    return render(request, 'edit_profile.html', context)
+
+
+# finance/views.py
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib import messages
+from django.urls import reverse_lazy
+
+class CustomPasswordChangeView(PasswordChangeView):
+    template_name = 'finance/password_change.html'
+    success_url = reverse_lazy('password_change_done')
+
+    def form_valid(self, form):
+        messages.success(self.request, "✅ Your password has been changed successfully.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "❌ Password not changed. Please check your old password and try again.")
+        return super().form_invalid(form)

@@ -41,6 +41,7 @@
 
 <div class="d-flex">
     <!-- Sidebar -->
+    {% if user.is_authenticated %}
     <div class="sidebar p-3">
         <h4 class="text-center">Finance Tracker</h4>
         <hr class="text-light">
@@ -56,6 +57,7 @@
         <a href="{% url 'logout' %}">Logout</a>
         
     </div>
+    {% endif %}
 
     <!-- Main Content -->
     <div class="content w-100">

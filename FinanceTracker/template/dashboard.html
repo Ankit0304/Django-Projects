@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
 
 <div class="container mt-4">
@@ -100,7 +102,7 @@
   <!-- Expense by Category Chart -->
   <div class="card shadow-sm mb-4" style="max-width:1200px; margin:auto;">
     <div class="card-header bg-info text-white text-center">
-      <h5 class="mb-0">Expense Distribution</h5>
+      <h5 class="mb-0">💰Total Expense Distribution</h5>
     </div>
     <div class="card-body">
       <canvas id="expenseChart" height="200"></canvas>

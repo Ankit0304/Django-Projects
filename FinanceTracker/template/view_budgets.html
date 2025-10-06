@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 <div class="container mt-4">
 
@@ -19,6 +20,7 @@
               <th>Amount</th>
               <th>Spent</th>
               <th>Remaining</th>
+              <th>End Date</th> <!-- New Column -->
               <th>Actions</th>
             </tr>
           </thead>
@@ -29,6 +31,7 @@
               <td>₹ {{ item.budget.amount }}</td>
               <td class="text-danger">₹ {{ item.spent }}</td>
               <td class="text-success">₹ {{ item.remaining }}</td>
+              <td>{{ item.budget.end_date|date:"M d, Y" }}</td> <!-- Display End Date -->
               <td>
                 <a href="{% url 'edit_budget' item.budget.id %}" class="btn btn-sm btn-warning me-1">
                   <i class="bi bi-pencil-square"></i> Edit

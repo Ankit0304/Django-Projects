@@ -29,7 +29,9 @@
       <div class="card shadow-sm border-primary">
         <div class="card-body">
           <h5 class="card-title text-primary">Net Savings</h5>
-          <p class="card-text fs-4 fw-bold">₹ {{ income|floatformat:2|add:"-:"|add:expense }}</p>
+          <!-- <p class="card-text fs-4 fw-bold">₹ {{ income|floatformat:2|add:"-:"|add:expense }}</p> -->
+           <p class="card-text fs-4 fw-bold">₹ {{ balance|floatformat:2 }}</p>
+
         </div>
       </div>
     </div>
